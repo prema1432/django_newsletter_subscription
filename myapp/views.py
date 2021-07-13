@@ -1,11 +1,12 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.conf import settings
+from django.template.loader import get_template
 from django.views.decorators.csrf import csrf_exempt
 from .models import Subscriber
 from .forms import SubscriberForm
 import random
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 from .forms import NewsForm
 
 # Create your views here.
@@ -19,28 +20,28 @@ def index(request):
 @csrf_exempt
 def new(request):
     if request.method == 'POST':
-      useremail =request.POST['email']
-      if Subscriber.objects.filter(email=useremail).exists():
-        messages.error(request, 'The Email is already used')
-        return redirect('index')
-      else:
-        sub = Subscriber(email=useremail, conf_num=random_digits())
-        sub.save()
-        messages.success(request, 'Mail Send Sucessfully Check and Confirm it ')
+        useremail =request.POST['email']
+        if Subscriber.objects.filter(email=useremail).exists():
+            messages.error(request, 'The Email is already used')
+            return redirect('index')
+        else:
+            contextpaart = {
+                'email': useremail
+            }
+            sub = Subscriber(email=useremail, conf_num=random_digits())
+            sub.save()
+            messages.success(request, 'Mail Send Sucessfully Check and Confirm it ')
 
-        html_content = 'Thank you for signing up for my email newsletter! \
-                        Please complete the process by \
-                         <a href="{}?email={}&conf_num={}"> clicking here to \
-                         confirm your registration</a>.'.format(request.build_absolute_uri('/confirm/'),sub.email,sub.conf_num)
-
-        response = send_mail(
-            'Newsletter Confirmation',
-            html_content,
-            settings.FROM_EMAIL,
-            [sub.email,],
-            fail_silently=False,
-        )
-        return render(request, 'index.html', {'email': sub.email, 'action': 'added', 'form': SubscriberForm()})
+            message = get_template('mailtemplate.html').render(contextpaart)
+            msg = EmailMessage(
+                'Subject',
+                message,
+                'ftalamarlapremanath@gmail.com',
+                ['talamarlapremanath143@gmail.com'],
+            )
+            msg.content_subtype = "html"  # Main content is now text/html
+            msg.send()
+            return render(request, 'index.html', {'email': sub.email, 'action': 'added', 'form': SubscriberForm()})
     else:
         return render(request, 'index.html', {'form': SubscriberForm()})
 
