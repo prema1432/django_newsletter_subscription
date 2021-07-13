@@ -25,13 +25,14 @@ def new(request):
             messages.error(request, 'The Email is already used')
             return redirect('index')
         else:
-            contextpaart = {
-                'email': useremail
-            }
+
             sub = Subscriber(email=useremail, conf_num=random_digits())
             sub.save()
             messages.success(request, 'Mail Send Sucessfully Check and Confirm it ')
-
+            contextpaart = {
+                'email': useremail,
+                'conf_num': sub.conf_num,
+            }
             message = get_template('mailtemplate.html').render(contextpaart)
             msg = EmailMessage(
                 'Subject',
@@ -44,6 +45,14 @@ def new(request):
             return render(request, 'index.html', {'email': sub.email, 'action': 'added', 'form': SubscriberForm()})
     else:
         return render(request, 'index.html', {'form': SubscriberForm()})
+def confirmfinal(request):
+    sub = Subscriber.objects.get(email=request.GET['email'])
+    if sub.conf_num == request.GET['conf_num']:
+        sub.confirmed = True
+        sub.save()
+        return render(request, 'index.html', {'email': sub.email, 'action': 'confirmed'})
+    else:
+        return render(request, 'index.html', {'email': sub.email, 'action': 'denied'})
 
 def confirm(request):
     sub = Subscriber.objects.get(email=request.GET['email'])

@@ -1,18 +1,27 @@
 <!DOCTYPE html>
             <html>
-                <body>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+                <body class="text-center">
                     <div style="background-color:#eee;padding:10px 20px;">
                         <h2 style="font-family:Georgia, 'Times New Roman', Times, serif;color#454349;"> {{email}}  My newsletter</h2>
                     </div>
                     <div style="padding:20px 0px">
-                        <div style="height: 500px;width:400px">
+                        <div style="height: 500px">
                             <img src="https://dummyimage.com/500x300/000/fff&text=Dummy+image" style="height: 300px;">
                             <div style="text-align:center;">
                                 <h3>Article 1</h3>
                                 <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. A ducimus deleniti nemo quibusdam iste sint!</p>
                                 <a href="#">Read more</a>
                             </div>
+                            <div>
+                                  Please complete the process by
+
+                                <a style="border: 2px solid red;background: green" class="btn btn-danger" href="http://127.0.0.1:8000/confirm/?email={{ email}}&conf_num={{ conf_num }}">Aaccept for Newsletters </a>
+                                  </div>
                         </div>
                     </div>
+                <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
                 </body>
             </html>
