@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-m3t#+th#jd2(l4p)q!o6x!j!^f-(7+zt0cr6^hhs@km7z2y4a8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -49,7 +49,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+
 
 ]
 
@@ -125,10 +127,19 @@ USE_TZ = True
 STATIC_URL = '/static/'
 # CORS_ORIGIN_ALLOW_ALL = True
 
+STATIC_ROOT=os.path.join(BASE_DIR,'static')
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
+
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
   'http://localhost:8000',
-'http://127.0.0.1:8000/'
+'http://127.0.0.1:8000'
 )
 
 # Default primary key field type

@@ -1,0 +1,1 @@
+web: gunicorn django_email_newsletter.wsgi
