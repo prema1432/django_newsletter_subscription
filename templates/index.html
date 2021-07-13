@@ -9,6 +9,9 @@
             <div class="col-12">
                 <h1>Email Newsletter</h1>
             </div>
+                                       {% include 'alerts.html' %}
+
+
             <div class="col-12">
                 {% if email %}
                 <p>{{ email }} has been {{ action }}</p>

@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.contrib import messages
+from django.shortcuts import render, redirect
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from .models import Subscriber
@@ -18,8 +19,15 @@ def index(request):
 @csrf_exempt
 def new(request):
     if request.method == 'POST':
-        sub = Subscriber(email=request.POST['email'], conf_num=random_digits())
+      useremail =request.POST['email']
+      if Subscriber.objects.filter(email=useremail).exists():
+        messages.error(request, 'The Email is already used')
+        return redirect('index')
+      else:
+        sub = Subscriber(email=useremail, conf_num=random_digits())
         sub.save()
+        messages.success(request, 'Mail Send Sucessfully Check and Confirm it ')
+
         html_content = 'Thank you for signing up for my email newsletter! \
                         Please complete the process by \
                          <a href="{}?email={}&conf_num={}"> clicking here to \

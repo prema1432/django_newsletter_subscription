@@ -127,10 +127,16 @@ USE_TZ = True
 STATIC_URL = '/static/'
 # CORS_ORIGIN_ALLOW_ALL = True
 
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger'
+}
+
+
 STATIC_ROOT=os.path.join(BASE_DIR,'static')
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
+    os.path.join(BASE_DIR, 'staticfiles')
 ]
 
 
