@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from django.template.loader import get_template
 from django.views.decorators.csrf import csrf_exempt
@@ -35,7 +35,7 @@ def new(request):
             }
             message = get_template('mailtemplate.html').render(contextpaart)
             msg = EmailMessage(
-                'Subject',
+                'Newsletter Subscription',
                 message,
                 'ftalamarlapremanath@gmail.com',
                 ['talamarlapremanath143@gmail.com'],
@@ -45,30 +45,31 @@ def new(request):
             return render(request, 'index.html', {'email': sub.email, 'action': 'added', 'form': SubscriberForm()})
     else:
         return render(request, 'index.html', {'form': SubscriberForm()})
-def confirmfinal(request):
-    sub = Subscriber.objects.get(email=request.GET['email'])
-    if sub.conf_num == request.GET['conf_num']:
-        sub.confirmed = True
-        sub.save()
-        return render(request, 'index.html', {'email': sub.email, 'action': 'confirmed'})
-    else:
-        return render(request, 'index.html', {'email': sub.email, 'action': 'denied'})
+
 
 def confirm(request):
-    sub = Subscriber.objects.get(email=request.GET['email'])
+    sub = get_object_or_404(Subscriber,email=request.GET['email'])
     if sub.conf_num == request.GET['conf_num']:
         sub.confirmed = True
         sub.save()
+        messages.success(request, 'Mail Confirmed Successfully ')
+
         return render(request, 'index.html', {'email': sub.email, 'action': 'confirmed'})
     else:
+        messages.warning(request, 'Mail Denied Try Again ')
+
         return render(request, 'index.html', {'email': sub.email, 'action': 'denied'})
 
 def delete(request):
-    sub = Subscriber.objects.get(email=request.GET['email'])
+    sub = get_object_or_404(Subscriber,email=request.GET['email'])
     if sub.conf_num == request.GET['conf_num']:
         sub.delete()
+        messages.info(request, 'Mail Deleted Successfully ')
+
         return render(request, 'index.html', {'email': sub.email, 'action': 'unsubscribed'})
     else:
+        messages.warning(request, 'Mail Denied Try Again ')
+
         return render(request, 'index.html', {'email': sub.email, 'action': 'denied'})
 
 def news(request):
@@ -79,15 +80,29 @@ def news(request):
         form.save()
     context['form'] = form
     for sub in subscribers:
-        html_content =  '<br><a href="{}?email={}&conf_num={}">Unsubscribe</a>.'.format(request.build_absolute_uri('/delete/'),
-                                                                           sub.email,
-                                                                           sub.conf_num)
-        send_mail(
-             'new newsletter',
-             html_content,
+        contextpaart = {
+            'email': sub.email,
+            'conf_num': sub.conf_num,
+        }
+        message = get_template('mailtemplate2.html').render(contextpaart)
+        msg = EmailMessage(
+            'News letter - New Post ',
+            message,
              settings.FROM_EMAIL,
-             [sub.email, ],
-             fail_silently=False,
-         )
+              [sub.email, ],
+        )
+        msg.content_subtype = "html"  # Main content is now text/html
+        msg.send()
+        # html_content =  '<br><a href="{}?email={}&conf_num={}">Unsubscribe</a>.'.format(request.build_absolute_uri('/delete/'),
+        #                                                                    sub.email,
+        #                                                                    sub.conf_num)
+        # send_mail(
+        #      'new newsletter',
+        #      html_content,
+        #      settings.FROM_EMAIL,
+        #      [sub.email, ],
+        #      fail_silently=False,
+        #  )
+
 
     return render(request,'news.html',context)
